@@ -22,12 +22,7 @@ Project autoservice {
 Table masters {
   id serial [primary key]
   master_name varchar(30) [not null]
-}
-
-Table boxes {
-  id serial [primary key]
-  box_name varchar(20) [not null]
-  size smallint [default: 1]
+  qualification varchar(15) [default: 'gen']
 }
 
 Table orders {
@@ -35,52 +30,43 @@ Table orders {
   status_id integer [not null, ref: > statuses.id]
   start_date timestamp [default: `now()`]
   end_date timestamp
-  credit_summ money [default: 0]
-  order_summ money [default: 0]
+  credit_summ numeric(8, 2) [default: 0.0]
+  order_summ numeric(8, 2) [default: 0.0]
   client_id bigint [ref: > clients.id]
   master_id integer [ref: > masters.id]
-  box_id integer [ref: > boxes.id]
   description text
   Note: 'Stores orders data'
-
-  indexes {
-    id
-    start_date [name: 'created_at_index', note: 'Date']
-    end_date [name: 'close_at_index', note: 'Date']
-  }
 }
 
 Table statuses {
-  id smallserial [primary key]
+  id serial [primary key]
   status varchar(15) [not null]
 }
 
 Table clients {
-  id bigserial [primary key]
+  id bigserial [primary key, Note:'chat_id']
   name varchar(30)
   phone varchar(15)
   email varchar(30)
   auto varchar(30)
-  number varchar(10) [not null, unique]
+  number varchar(10) [unique]
   description text
   Note: 'Stores clients data'
 
   indexes {
-      (id, number) [pk] // composite primary key
+      (id, number)
   }
 }
 
 Table works {
   id bigserial [primary key]
   work_name varchar(200) [not null]
-  price money [default: 0]
-  norm_hour real [default: 1]
+  price numeric(8, 2) [default: 0.0]
+  norm_min integer [default: 60]
+  for_selection boolean [default: false]
+  requirements varchar(5) [default: 'gen']
   description text
   Note: 'Stores autoservice work data'
-
-  indexes {
-    work_name
-  }
 }
 
 Table parts {
@@ -88,15 +74,10 @@ Table parts {
   part_name varchar(200) [not null]
   part_number varchar(15)
   original_number varchar(15)
-  price money [default: 0]
+  price numeric(8, 2) [default: 0.0]
   compatibility varchar(150)
   description text
   Note: 'Stores auto parts data'
-
-  indexes {
-      part_name
-      (part_number, original_number) [unique]
-  }
 }
 
 Table content_orders {
@@ -104,6 +85,7 @@ Table content_orders {
   order_id bigint [not null, ref: > orders.id]
   work_id bigint [ref: > works.id]
   part_id bigint [ref: > parts.id]
+  quantity integer [default: 1]
   Note: 'Stores item of orders'
 }
 ```
