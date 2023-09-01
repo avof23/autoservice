@@ -1,3 +1,4 @@
+"""The module describes the database structure using sqlalchemy ORM. Classes are used"""
 import os
 
 from sqlalchemy import Column, Integer, BigInteger, Numeric, \
@@ -16,10 +17,12 @@ Base = declarative_base()
 
 
 class BaseModel(Base):
+    """Parent class on Base class"""
     __abstract__ = True
 
 
 class Masters(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'masters'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -29,10 +32,12 @@ class Masters(BaseModel):
     order = relationship('Orders', back_populates='master', lazy='joined')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.master_name}'
 
 
 class Statuses(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'statuses'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -41,10 +46,12 @@ class Statuses(BaseModel):
     order = relationship('Orders', back_populates='status', lazy='joined')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.status}'
 
 
 class Orders(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'orders'
     __tableargs__ = {'comment': 'Stores orders data'}
 
@@ -64,10 +71,12 @@ class Orders(BaseModel):
     content_orders = relationship('ContentOrders', back_populates='order', lazy='joined')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.start_date} {self.order_summ} {self.description}'
 
 
 class Clients(BaseModel):
+    """The class describes the database table and relationship, indexes"""
     __tablename__ = 'clients'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True, comment='chat_id')
@@ -82,10 +91,12 @@ class Clients(BaseModel):
     order = relationship('Orders', back_populates='client', lazy='joined')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.name} {self.phone} Auto: {self.auto} {self.number}'
 
 
 class Works(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'works'
     __tableargs__ = {'comment': 'Stores autoservice work data'}
 
@@ -100,10 +111,12 @@ class Works(BaseModel):
     order = relationship('ContentOrders', back_populates='work')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.work_name} {self.price} NH:{self.norm_hour}'
 
 
 class Parts(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'parts'
     __tableargs__ = {'comment': 'Stores auto parts data'}
 
@@ -118,10 +131,12 @@ class Parts(BaseModel):
     order = relationship('ContentOrders', back_populates='part')
 
     def __repr__(self):
+        """The method returns a information string of object"""
         return f'{self.id} {self.part_name} {self.part_number} {self.price}'
 
 
 class ContentOrders(BaseModel):
+    """The class describes the database table and relationship"""
     __tablename__ = 'content_orders'
     __tableargs__ = {'comment': 'Stores item of orders'}
 
