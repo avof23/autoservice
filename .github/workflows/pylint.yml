@@ -20,6 +20,8 @@ jobs:
         pip install pylint
         pip install pytest
         pip install sqlalchemy
+        pip install dotenv
+        pip install aiogram
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
