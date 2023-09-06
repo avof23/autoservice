@@ -6,13 +6,18 @@ from os import getenv
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
+
+from constants import LANG
+from text_templates import template
+
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 dp = Dispatcher()
+
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
@@ -24,22 +29,30 @@ async def command_start_handler(message: Message) -> None:
     # and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
     # method automatically or call API method directly via
     # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
-    await message.answer(f"Hello, {hbold(message.from_user.full_name)}!")
+    await message.answer(f"Hello, {hbold(message.from_user.full_name)}!\n{template[LANG]['welcome']}")
 
 
-@dp.message()
-async def echo_handler(message: types.Message) -> None:
+@dp.message(Command("help", ignore_case = True))
+async def view_help(message: types.Message) -> None:
+    """The handler will print help about all commands for this chatbot.
+    receive /help text
     """
-    Handler will forward receive a message back to the sender
+    await message.answer(template[LANG]['help'])
 
-    By default, message handler will handle all message types (like a text, photo, sticker etc.)
-    """
-    try:
-        # Send a copy of the received message
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+
+# @dp.message()
+# async def echo_handler(message: types.Message) -> None:
+#     """
+#     Handler will forward receive a message back to the sender
+#
+#     By default, message handler will handle all message types (like a text, photo, sticker etc.)
+#     """
+#     try:
+#         # Send a copy of the received message
+#         await message.send_copy(chat_id=message.chat.id)
+#     except TypeError:
+#         # But not all the types is supported to be copied so need to handle it
+#         await message.answer("Nice try!")
 
 
 async def main() -> None:
