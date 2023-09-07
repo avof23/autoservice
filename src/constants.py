@@ -1,1 +1,2 @@
 LANG = 'en'
+VALUT = 'UAH'
