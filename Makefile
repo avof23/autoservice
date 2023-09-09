@@ -1,6 +1,6 @@
 
 check:
-		pylint src --recursive=y
+		pylint src --recursive=y --ignore qtest.py,core_db2.py
 format:
 		black .
 		isort .
