@@ -1,4 +1,4 @@
-
+"""This file contains template dictionary with all text message used in this project"""
 template = {
     'en': {'welcome': '''Welcome to AutoServiceBot. 
 You can write your auto to service for a specific date. 

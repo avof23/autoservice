@@ -1,3 +1,4 @@
+"""This module describes and creates all keyboards for dialogue with the user"""
 from sqlalchemy.orm import Session
 from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton
@@ -11,6 +12,7 @@ from text_templates import template
 
 
 class WorksCallbackFactory(CallbackData, prefix="fabwork"):
+    """The class describes the callback request format of works selected by the user"""
     id: int
     work_name: str
     price: float
@@ -24,8 +26,9 @@ def kbselect_db_works() -> list:
        """
     with Session(engine) as session:
         q_result = session.query(Works).filter(
-            Works.for_selection == True).all()
+            Works.for_selection is True).all()
     return q_result
+
 
 def works_keyboard_fab():
     """Function generate Inline keyboard for select works in chat
@@ -38,7 +41,6 @@ def works_keyboard_fab():
                                                            work_name=work.work_name,
                                                            price=work.price,
                                                            norm_min=work.norm_min))
-
     kb_works.adjust(1)
     return kb_works.as_markup()
 
