@@ -8,10 +8,14 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
 load_dotenv()
+db_host = os.getenv('DB_HOSTNAME')
+db_name = os.getenv('DB_NAME')
+db_user = os.getenv('DB_USER')
 db_passwd = os.getenv('DB_PASSWD')
 
+
 engine = create_engine(
-    f'postgresql+psycopg2://user_autoservice:{db_passwd}@localhost/autoservice'
+    f'postgresql+psycopg2://{db_user}:{db_passwd}@{db_host}/{db_name}'
 )
 Base = declarative_base()
 
