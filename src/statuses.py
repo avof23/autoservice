@@ -1,4 +1,4 @@
-
+"""This module creates a router that processes status requests from users"""
 from sqlalchemy.orm import Session
 from aiogram import Router
 from aiogram.types import Message

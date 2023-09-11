@@ -1,4 +1,4 @@
-"""The module describes the database structure using sqlalchemy ORM. Classes are used"""
+"""This module describes the database structure using sqlalchemy ORM. Classes are used"""
 import os
 
 from sqlalchemy import Column, Integer, BigInteger, Numeric, \

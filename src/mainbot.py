@@ -1,3 +1,4 @@
+"""This module declares a telegram bot, connects its routers and basic hadlers"""
 import asyncio
 import logging
 import sys
