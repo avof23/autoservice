@@ -55,6 +55,7 @@ def works_keyboard_fab():
 #                                   input_field_placeholder=template[LANG]['workselect'])
 
 
+
 if __name__ == '__main__':
     for work in kbselect_db_works():
         print(work)
