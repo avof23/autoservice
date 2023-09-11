@@ -112,7 +112,7 @@ class Works(BaseModel):
 
     def __repr__(self):
         """The method returns a information string of object"""
-        return f'{self.id} {self.work_name} {self.price} NH:{self.norm_hour}'
+        return f'{self.id} {self.work_name} {self.price} NM:{self.norm_min}'
 
 
 class Parts(BaseModel):

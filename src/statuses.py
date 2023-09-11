@@ -5,6 +5,8 @@ from aiogram.types import Message
 from aiogram.filters import Command, CommandObject
 
 from db import engine, Orders
+from text_templates import template
+from constants import LANG
 
 router_status = Router()
 
@@ -39,14 +41,12 @@ async def get_status(message: Message, command: CommandObject) -> None:
         try:
             order_id = int(command.args)
             order_info = get_db_order(order_id)
-            answer_message = 'Order ID: {id}\n' \
-                             'Status: {status} Start in: {start_date}\n' \
-                             'Summ: {order_summ} Master name: {master}'.format(**order_info)
+            answer_message = template[LANG]['answerorder'].format(**order_info)
             await message.answer(answer_message)
         except Exception:
-            await message.answer('Incorrect Order ID!')
+            await message.answer(template[LANG]['incorrectid'])
     else:
-        await message.answer('Please enter your Order ID\n after command /status')
+        await message.answer(template[LANG]['orderreq'])
 
 
 if __name__ == '__main__':

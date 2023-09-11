@@ -13,11 +13,13 @@ from aiogram.utils.markdown import hbold
 from constants import LANG
 from text_templates import template
 import statuses
+import register
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 dp = Dispatcher()
 dp.include_router(statuses.router_status)
+dp.include_router(register.router_register)
 
 
 @dp.message(CommandStart())
