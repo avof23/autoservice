@@ -1,14 +1,12 @@
 """This module describes and creates all keyboards for dialogue with the user"""
+import datetime
+
 from sqlalchemy.orm import Session
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 from db import engine, Works
-from constants import LANG
-from text_templates import template
+from constants import WEEKEND_DAYS, WORK_TIME
 
 
 class WorksCallbackFactory(CallbackData, prefix="fabwork"):
@@ -19,15 +17,31 @@ class WorksCallbackFactory(CallbackData, prefix="fabwork"):
     norm_min: int
 
 
-def kbselect_db_works() -> list:
+def get_works_db() -> list:
     """Function get information about works from database
        Returns:
            List: Information about works in dictionary
        """
     with Session(engine) as session:
         q_result = session.query(Works).filter(
-            Works.for_selection is True).all()
+            Works.for_selection == True).all()
     return q_result
+
+
+def get_days() -> list:
+    """The function determines the nearest working days from the current one,
+    taking into account weekends
+    Returns:
+        list: work days format DD.MM"""
+    now = datetime.datetime.now()
+    days_for_reg = []
+    while len(days_for_reg) < 7 - len(WEEKEND_DAYS):
+        if int(now.strftime('%w')) in WEEKEND_DAYS:
+            now += datetime.timedelta(days=1)
+            continue
+        days_for_reg.append(now.strftime('%d.%m'))
+        now += datetime.timedelta(days=1)
+    return days_for_reg
 
 
 def works_keyboard_fab():
@@ -35,7 +49,7 @@ def works_keyboard_fab():
     Returns:
         InlineKeyboardBuilder markup"""
     kb_works = InlineKeyboardBuilder()
-    for work in kbselect_db_works():
+    for work in get_works_db():
         kb_works.button(text=work.work_name,
                         callback_data=WorksCallbackFactory(id=work.id,
                                                            work_name=work.work_name,
@@ -45,19 +59,24 @@ def works_keyboard_fab():
     return kb_works.as_markup()
 
 
-#Reply Keyboard with bilder
-# kb_works = ReplyKeyboardBuilder()
-# for work in kbselect_db_works():
-#     kb_works.add(KeyboardButton(text=work.work_name))
-# kb_works.adjust(1)
+def date_keyboard_fab():
+    """Function generate Inline keyboard for select date in chat"""
+    kb_date = InlineKeyboardBuilder()
+    for day in get_days():
+        kb_date.button(text=day, callback_data=day)
+    kb_date.adjust(2)
+    return kb_date.as_markup()
 
-# Reply Keyboard without bilder
-#kb = [[KeyboardButton(text=work.work_name)] for work in kbselect_db_works()]
-#greet_kb = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True,
-#                                   input_field_placeholder=template[LANG]['workselect'])
 
+def time_keyboard_fab():
+    """Function generate Inline keyboard for select time in chat"""
+    kb_time = InlineKeyboardBuilder()
+    for hour in WORK_TIME:
+        kb_time.button(text=f'{hour}:00', callback_data=f'{hour}:00')
+    kb_time.adjust(3)
+    return kb_time.as_markup()
 
 
 if __name__ == '__main__':
-    for work in kbselect_db_works():
+    for work in get_works_db():
         print(work)
