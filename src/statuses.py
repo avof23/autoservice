@@ -5,8 +5,8 @@ from aiogram.types import Message
 from aiogram.filters import Command, CommandObject
 
 from db import engine, Orders
-from text_templates import template
-from constants import LANG
+from constants import LANG, template
+
 
 router_status = Router()
 
@@ -20,15 +20,15 @@ def get_db_order(order_id: int) -> dict:
     """
     with Session(engine) as session:
         q_result = session.query(Orders).filter(
-            Orders.id == order_id).all()
+            Orders.id == order_id).first()
         result = {
-            'id': q_result[0].id,
-            'status': q_result[0].status.status,
-            'start_date': q_result[0].start_date,
-            'end_date': q_result[0].end_date,
-            'order_summ': q_result[0].order_summ,
-            'master': q_result[0].master.master_name,
-            'descr': q_result[0].description
+            'id': q_result.id,
+            'status': q_result.status.status,
+            'start_date': q_result.start_date,
+            'end_date': q_result.end_date,
+            'order_summ': q_result.order_summ,
+            'master': q_result.master.master_name,
+            'descr': q_result.description
         }
     return result
 

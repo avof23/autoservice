@@ -6,8 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 
 from db import Orders, Clients
-from constants import LANG, VALUT, NEW_STATUS_ID
-from text_templates import template
+from constants import LANG, template, VALUT, NEW_STATUS_ID
 import keyboards as kb
 
 

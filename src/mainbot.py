@@ -1,4 +1,4 @@
-"""This module declares a telegram bot, connects its routers and basic hadlers"""
+"""This module declares a telegram bot, connects its routers and basic handlers"""
 import asyncio
 import logging
 import sys
@@ -11,10 +11,10 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 
-from constants import LANG
-from text_templates import template
+from constants import LANG, template
 import statuses
 import register
+
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
