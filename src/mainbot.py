@@ -10,6 +10,7 @@ from aiogram.enums import ParseMode
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
+from aiogram.fsm.storage.memory import MemoryStorage
 
 from constants import LANG, template
 import statuses
@@ -18,7 +19,7 @@ import register
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())
 dp.include_router(statuses.router_status)
 dp.include_router(register.router_register)
 
@@ -37,12 +38,6 @@ async def view_help(message: types.Message) -> None:
     receive /help command
     """
     await message.answer(template[LANG]['help'])
-
-
-@dp.message(Command("cancel", ignore_case=True))
-async def view_help(message: types.Message) -> None:
-    """This handler will cancel register process."""
-    await message.answer(template[LANG]['cancel'])
 
 
 async def main() -> None:
