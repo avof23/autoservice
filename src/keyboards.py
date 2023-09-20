@@ -39,7 +39,7 @@ def get_days() -> list:
         if int(now.strftime('%w')) in WEEKEND_DAYS:
             now += datetime.timedelta(days=1)
             continue
-        days_for_reg.append(now.strftime('%d.%m'))
+        days_for_reg.append(now.strftime('%d.%m.%Y'))
         now += datetime.timedelta(days=1)
     return days_for_reg
 
@@ -63,7 +63,7 @@ def date_keyboard_fab():
     """Function generate Inline keyboard for select date in chat"""
     kb_date = InlineKeyboardBuilder()
     for day in get_days():
-        kb_date.button(text=day, callback_data=day)
+        kb_date.button(text=day[:-5], callback_data=day)
     kb_date.adjust(2)
     return kb_date.as_markup()
 
