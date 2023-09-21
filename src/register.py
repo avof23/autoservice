@@ -130,7 +130,7 @@ async def callbacks_days_select_incorrectly(message: Message):
                          reply_markup=kb.date_keyboard_fab())
 
 
-@router_register.callback_query(OrderWork.choosing_work_time, F.data.regexp(r"\d{2}:\d{2}"))
+@router_register.callback_query(OrderWork.choosing_work_time, F.data.regexp(r"\d{1,2}:\d{2}"))
 async def callbacks_time_select_fab(callback: CallbackQuery, state: FSMContext):
     """
         Function receives callback and save value in FSM context MemoryStorage
