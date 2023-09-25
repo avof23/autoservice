@@ -7,7 +7,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from db import engine, Works
 from constants import WEEKEND_DAYS, WORK_TIME
-
+from datecalc import calculate_free_days, calculate_free_times
 
 class WorksCallbackFactory(CallbackData, prefix="fabwork"):
     """The class describes the callback request format of works selected by the user"""
@@ -15,12 +15,13 @@ class WorksCallbackFactory(CallbackData, prefix="fabwork"):
     work_name: str
     price: float
     norm_min: int
+    requirements: str
 
 
 def get_works_db() -> list:
     """Function get information about works from database
        Returns:
-           List: Information about works in dictionary
+           List: Information about works in list
        """
     with Session(engine) as session:
         q_result = session.query(Works).filter(
@@ -54,24 +55,25 @@ def works_keyboard_fab():
                         callback_data=WorksCallbackFactory(id=work.id,
                                                            work_name=work.work_name,
                                                            price=work.price,
-                                                           norm_min=work.norm_min))
+                                                           norm_min=work.norm_min,
+                                                           requirements=work.requirements))
     kb_works.adjust(1)
     return kb_works.as_markup()
 
 
-def date_keyboard_fab():
+def date_keyboard_fab(work_type: str):
     """Function generate Inline keyboard for select date in chat"""
     kb_date = InlineKeyboardBuilder()
-    for day in get_days():
-        kb_date.button(text=day[:-5], callback_data=day)
+    for day in calculate_free_days(work_type):
+            kb_date.button(text=day[:-5], callback_data=day)
     kb_date.adjust(2)
     return kb_date.as_markup()
 
 
-def time_keyboard_fab():
+def time_keyboard_fab(work_type: str, start_date: str):
     """Function generate Inline keyboard for select time in chat"""
     kb_time = InlineKeyboardBuilder()
-    for hour in WORK_TIME:
+    for hour in calculate_free_times(work_type, start_date):
         kb_time.button(text=f'{hour}:00', callback_data=f'{hour}:00')
     kb_time.adjust(3)
     return kb_time.as_markup()
