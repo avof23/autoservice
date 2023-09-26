@@ -8,3 +8,5 @@ req:
 		pip freeze > requirements.txt
 test:
 		coverage run -m pytest
+run:
+        python mainbot.py

@@ -11,6 +11,7 @@ from aiogram.filters.state import State, StatesGroup
 from db import engine, Orders, Clients, ContentOrders
 from constants import LANG, template, VALUT, NEW_STATUS_ID
 import keyboards as kb
+from datecalc import get_free_master_db
 
 
 class OrderWork(StatesGroup):
@@ -45,8 +46,9 @@ def create_order_db(**kwargs) -> int:
     end_date = start_date + datetime.timedelta(minutes=kwargs['norm_min'])
     order.start_date = datetime.datetime.strftime(start_date, '%Y-%m-%d %H:%M')
     order.end_date = datetime.datetime.strftime(end_date, '%Y-%m-%d %H:%M')
-
-    order.master_id = 1  # Master selection variable
+    order.master_id = get_free_master_db(kwargs['work_type'], start_date)
+    if order.master_id == 0:
+        return 0
     order.description = 'Order created in TB'
     cont_order.work_id = kwargs['work_id']
     cont_order.quantity = 1
@@ -95,12 +97,14 @@ async def callbacks_works_select_fab(
     """
     await state.update_data(status_id=NEW_STATUS_ID,
                             order_summ=callback_data.price, credit_summ=callback_data.price * (-1),
-                            work_id=callback_data.id, norm_min=callback_data.norm_min)
+                            work_id=callback_data.id, norm_min=callback_data.norm_min,
+                            work_type=callback_data.requirements)
     await callback.message.edit_text(f"{template[LANG]['workselect']}: {callback_data.work_name}, "
                                      f"{template[LANG]['pricetext']}: {callback_data.price} {VALUT}\n")
     await callback.answer()
     await state.set_state(OrderWork.choosing_work_date)
-    await callback.message.answer(text=template[LANG]['datechoice'], reply_markup=kb.date_keyboard_fab())
+    await callback.message.answer(text=template[LANG]['datechoice'],
+                                  reply_markup=kb.date_keyboard_fab(callback_data.requirements))
 
 
 @router_register.message(OrderWork.choosing_work_name)
@@ -117,17 +121,20 @@ async def callbacks_days_select_fab(callback: CallbackQuery, state: FSMContext):
         Sends a response to the user of his choice
     """
     await state.update_data(start_date=callback.data, end_date=callback.data)
+    context_data = await state.get_data()
     await callback.message.edit_text(f"{template[LANG]['dateselect']}: {callback.data}")
     await callback.answer()
     await state.set_state(OrderWork.choosing_work_time)
-    await callback.message.answer(text=template[LANG]['timechoice'], reply_markup=kb.time_keyboard_fab())
+    await callback.message.answer(text=template[LANG]['timechoice'],
+                                  reply_markup=kb.time_keyboard_fab(context_data['work_type'], callback.data))
 
 
 @router_register.message(OrderWork.choosing_work_date)
-async def callbacks_days_select_incorrectly(message: Message):
+async def callbacks_days_select_incorrectly(message: Message, state: FSMContext):
     """Function for reselecting a value in case of incorrect input from the client"""
+    context_data = await state.get_data()
     await message.answer(f"Incorrect select\n\n{template[LANG]['datechoice']}",
-                         reply_markup=kb.date_keyboard_fab())
+                         reply_markup=kb.date_keyboard_fab(context_data['work_type']))
 
 
 @router_register.callback_query(OrderWork.choosing_work_time, F.data.regexp(r"\d{1,2}:\d{2}"))
@@ -143,14 +150,18 @@ async def callbacks_time_select_fab(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     update_client_db(user_data['client_id'], user_data['client_name'], user_data['description'])
     new_order_id = create_order_db(**user_data)
-    await callback.message.answer(text=template[LANG]['create'].format(id=new_order_id))
+    if new_order_id != 0:
+        await callback.message.answer(text=template[LANG]['create'].format(id=new_order_id))
+    else:
+        await callback.message.answer(text=template[LANG]['errorcreate'])
 
 
 @router_register.message(OrderWork.choosing_work_time)
-async def callbacks_time_select_incorrectly(message: Message):
+async def callbacks_time_select_incorrectly(message: Message, state: FSMContext):
     """Function for reselecting a value in case of incorrect input from the client"""
+    context_data = await state.get_data()
     await message.answer(f"Incorrect select\n\n{template[LANG]['timechoice']}",
-                         reply_markup=kb.time_keyboard_fab())
+                         reply_markup=kb.time_keyboard_fab(context_data['work_type'], context_data['start_date']))
 
 
 if __name__ == '__main__':
