@@ -1,13 +1,15 @@
 import datetime
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from db import engine, Masters, Orders
 from constants import WORK_TIME, WEEKEND_DAYS
 
 
 def get_masters_db(qu: str) -> list:
-    """The function get information about masters from database
+    """
+    The function get information about masters from database
         :param qu: string master qualification width filter in query
         :return List information about masters
        """
@@ -17,7 +19,8 @@ def get_masters_db(qu: str) -> list:
 
 
 def get_orders_db(master_id: int, start_date: datetime.datetime, end_date: datetime.datetime | bool = False) -> list:
-    """The function get information about orders from database
+    """
+    The function get information about orders from database
         :param master_id: Integer for width filter in query
         :param start_date: Datetime for width filter in query
         :param end_date: Datetime for width filter in query
@@ -35,8 +38,59 @@ def get_orders_db(master_id: int, start_date: datetime.datetime, end_date: datet
     return m_result
 
 
+def check_free_master_in_date(master_id: int, work_date: datetime.datetime) -> bool:
+    """
+    The function checks the database for whether a master is occupied on a specific date
+    :param master_id: checked master ID
+    :param work_date: checked datetime
+    :return: bool False if master is busy, True if master free
+    """
+    with Session(engine) as session:
+        m_result = session.query(Orders) \
+            .filter(Orders.master_id == master_id) \
+            .filter(Orders.status_id < 4) \
+            .filter(Orders.start_date <= work_date) \
+            .filter(Orders.end_date > work_date)
+        m_result.first()
+    return m_result.count() == 0
+
+
+def get_statistic_masters_db(qu: str) -> list:
+    """
+    The function calculates the number of active orders on each of the masters
+    :param qu: Str of master qualification
+    :return: List statistic for all masters {masterID:ordersCount}
+    """
+    with Session(engine) as session:
+        stat_result = session.query(Orders.master_id,
+                      func.count(Orders.id)).group_by(Orders.master_id).join(Masters)\
+            .filter(Orders.status_id < 4, Masters.qualification == qu).all()
+    return stat_result
+
+
+def get_free_master_db(qu: str, work_date: datetime.datetime) -> int:
+    """
+    The function calculates all available masters for a specific time
+    and returns the master ID for assigning an order, taking into account workload statistics
+    :param qu: Str of master qualification
+    :param work_date: Date for which the order must be created
+    :return: Integer Master ID
+    """
+    free_masters = dict()
+    for master in get_masters_db(qu):
+        if check_free_master_in_date(master.id, work_date):
+            free_masters[master.id] = 0
+    if len(free_masters) > 1:
+        statistic = get_statistic_masters_db(qu)
+        free_masters.update(statistic)
+    elif len(free_masters) == 0:
+        return 0
+    return min(free_masters, key=lambda unit: free_masters[unit])
+
+
 def get_daystime() -> list:
-    """The function calculates all available days in the current time interval
+    """
+    The function calculates all available days in the current time interval
     :return: List of sets have all available days in current time period
     """
     now = datetime.datetime.now()
@@ -55,7 +109,8 @@ def get_daystime() -> list:
 
 
 def parse_ord(order: Orders) -> set:
-    """Helper function for converting a time period into a datetime set with an interval of 1 hour
+    """
+    Helper function for converting a time period into a datetime set with an interval of 1 hour
     :param order: One order that contains a time interval
     :return: set of all datetime element in time period
     """
@@ -67,7 +122,8 @@ def parse_ord(order: Orders) -> set:
 
 
 def calculate_free_days(work_type: str) -> list:
-    """The function calculates free days based on orders from the database
+    """
+    The function calculates free days based on orders from the database
     :param work_type: String type of work user selected
     :return: List of free days for show in keyboard
     """
@@ -98,7 +154,8 @@ def calculate_free_days(work_type: str) -> list:
 
 
 def calculate_free_times(work_type: str, start_date: str) -> list:
-    """The function calculates free time based on orders from the database
+    """
+    The function calculates free time based on orders from the database
     :param work_type: String type of work user selected
     :param start_date: String data %d.%m.%Y format
     :return: List of free hours for show in keyboard
@@ -123,3 +180,15 @@ def calculate_free_times(work_type: str, start_date: str) -> list:
     for master_set in master_hours.values():
         free_hours = free_hours.union(master_set)
     return sorted(free_hours)
+
+
+if __name__ == '__main__':
+    # print(check_free_master_in_date(1, '2023-09-26 11:00'))
+    # print(get_statistic_masters_db('gen'))
+    print(get_free_master_db('gen', '2023-09-26 13:00'))
+    assert get_free_master_db('gen', '2023-09-26 11:00') == 0
+    assert get_free_master_db('gen', '2023-09-26 12:00') == 1
+    assert get_free_master_db('gen', '2023-09-26 13:00') == 3
+    assert get_free_master_db('gen', '2023-09-26 17:00') == 3
+    assert get_free_master_db('el', '2023-09-25 13:00') == 0
+    assert get_free_master_db('el', '2023-09-26 11:00') == 2

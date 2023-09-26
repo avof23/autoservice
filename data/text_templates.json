@@ -11,7 +11,8 @@
   "incorrectid": "Incorrect Order ID!",
   "answerorder": "Order ID: {id}\nStatus: {status} Start in: {start_date}\nSumm: {order_summ} Master name: {master}",
   "cancel": "Canceled register process",
-  "create": "Order successful created, ID: {id}"},
+  "create": "Order successful created, ID: {id}",
+  "errorcreate": "Unfortunately, this time is already taken, please try again for another time."},
 
   "ru": {"welcome": "Добро пожаловать в AutoServiceBot.\nВы можете записать ваше auto на service на определенную дату.\nПосле записи вы можете посмотреть статус вашего заказа и прочую информацию по нему.\nДля вывода справки наберите /help",
   "help": "Функции Бота:\n/help - Вывод справки\n/register - Запись авто на сервис\n/status - Получить статус заказа\n/cancel - Отмена процесса записи",
@@ -26,5 +27,6 @@
   "incorrectid": "Некорректный номер Заказа!",
   "answerorder": "Номер Заказа: {id}\nСтатус: {status} Начало: {start_date}\nСумма: {order_summ} Мастер: {master}",
   "cancel": "Отменен процесс регистрации",
-  "create": "Заказ успешно создан, ID: {id}"}
+  "create": "Заказ успешно создан, ID: {id}",
+  "errorcreate": "К сожалению данное время уже занято, повторите запись на другое время"}
 }

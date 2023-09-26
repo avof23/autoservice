@@ -11,6 +11,7 @@ from aiogram.filters.state import State, StatesGroup
 from db import engine, Orders, Clients, ContentOrders
 from constants import LANG, template, VALUT, NEW_STATUS_ID
 import keyboards as kb
+from datecalc import get_free_master_db
 
 
 class OrderWork(StatesGroup):
@@ -45,8 +46,9 @@ def create_order_db(**kwargs) -> int:
     end_date = start_date + datetime.timedelta(minutes=kwargs['norm_min'])
     order.start_date = datetime.datetime.strftime(start_date, '%Y-%m-%d %H:%M')
     order.end_date = datetime.datetime.strftime(end_date, '%Y-%m-%d %H:%M')
-
-    order.master_id = 1  # Master selection variable
+    order.master_id = get_free_master_db(kwargs['work_type'], start_date)
+    if order.master_id == 0:
+        return 0
     order.description = 'Order created in TB'
     cont_order.work_id = kwargs['work_id']
     cont_order.quantity = 1
@@ -148,7 +150,10 @@ async def callbacks_time_select_fab(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     update_client_db(user_data['client_id'], user_data['client_name'], user_data['description'])
     new_order_id = create_order_db(**user_data)
-    await callback.message.answer(text=template[LANG]['create'].format(id=new_order_id))
+    if new_order_id != 0:
+        await callback.message.answer(text=template[LANG]['create'].format(id=new_order_id))
+    else:
+        await callback.message.answer(text=template[LANG]['errorcreate'])
 
 
 @router_register.message(OrderWork.choosing_work_time)
