@@ -183,12 +183,4 @@ def calculate_free_times(work_type: str, start_date: str) -> list:
 
 
 if __name__ == '__main__':
-    # print(check_free_master_in_date(1, '2023-09-26 11:00'))
-    # print(get_statistic_masters_db('gen'))
-    print(get_free_master_db('gen', '2023-09-26 13:00'))
-    assert get_free_master_db('gen', '2023-09-26 11:00') == 0
-    assert get_free_master_db('gen', '2023-09-26 12:00') == 1
-    assert get_free_master_db('gen', '2023-09-26 13:00') == 3
-    assert get_free_master_db('gen', '2023-09-26 17:00') == 3
-    assert get_free_master_db('el', '2023-09-25 13:00') == 0
-    assert get_free_master_db('el', '2023-09-26 11:00') == 2
+    print(get_statistic_masters_db('gen'))

@@ -6,8 +6,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 from db import engine, Works
-from constants import WEEKEND_DAYS, WORK_TIME
+from constants import WEEKEND_DAYS
 from datecalc import calculate_free_days, calculate_free_times
+
 
 class WorksCallbackFactory(CallbackData, prefix="fabwork"):
     """The class describes the callback request format of works selected by the user"""
@@ -65,7 +66,7 @@ def date_keyboard_fab(work_type: str):
     """Function generate Inline keyboard for select date in chat"""
     kb_date = InlineKeyboardBuilder()
     for day in calculate_free_days(work_type):
-            kb_date.button(text=day[:-5], callback_data=day)
+        kb_date.button(text=day[:-5], callback_data=day)
     kb_date.adjust(2)
     return kb_date.as_markup()
 
