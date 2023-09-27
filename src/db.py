@@ -154,5 +154,9 @@ class ContentOrders(BaseModel):
     part = relationship('Parts', back_populates='order', lazy='joined')
     order = relationship('Orders', back_populates='content_orders', lazy='joined')
 
+    def __repr__(self):
+        """The method returns a information string of object"""
+        return f'{self.order_id} {self.work_id}/{self.part_id} {self.quantity}'
+
 
 Base.metadata.create_all(engine)

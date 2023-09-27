@@ -9,4 +9,4 @@ req:
 test:
 		coverage run -m pytest
 run:
-        python mainbot.py
+		python src/mainbot.py

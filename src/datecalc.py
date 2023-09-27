@@ -33,7 +33,7 @@ def get_orders_db(master_id: int, start_date: datetime.datetime, end_date: datet
             .filter(Orders.start_date >= start_date)
 
         if end_date:
-            m_result.filter(Orders.start_date <= end_date)
+            m_result = m_result.filter(Orders.start_date <= end_date)
         m_result.all()
     return m_result
 

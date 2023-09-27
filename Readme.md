@@ -89,13 +89,8 @@ Table content_orders {
   Note: 'Stores item of orders'
 }
 ```
-
-- При запросе /status надо определять по user_id есть ли такой пользователь в базе
-и выводить его активный статус заказа
 - push уведомления
 - меню
-- Отдачу заказ-наряда в виде pdf
-
 
 ### Author
 A.Vlashchenkov
