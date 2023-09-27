@@ -6,6 +6,8 @@ format:
 		isort .
 req:
 		pip freeze > requirements.txt
+prepare:
+		pip install -r requirements.txt
 test:
 		coverage run -m pytest
 run:

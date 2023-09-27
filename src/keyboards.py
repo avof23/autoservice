@@ -1,12 +1,10 @@
 """This module describes and creates all keyboards for dialogue with the user"""
-import datetime
 
 from sqlalchemy.orm import Session
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 from db import engine, Works
-from constants import WEEKEND_DAYS
 from datecalc import calculate_free_days, calculate_free_times
 
 
@@ -28,22 +26,6 @@ def get_works_db() -> list:
         q_result = session.query(Works).filter(
             Works.for_selection == True).all()
     return q_result
-
-
-def get_days() -> list:
-    """The function determines the nearest working days from the current one,
-    taking into account weekends
-    Returns:
-        list: work days format DD.MM"""
-    now = datetime.datetime.now()
-    days_for_reg = []
-    while len(days_for_reg) < 7 - len(WEEKEND_DAYS):
-        if int(now.strftime('%w')) in WEEKEND_DAYS:
-            now += datetime.timedelta(days=1)
-            continue
-        days_for_reg.append(now.strftime('%d.%m.%Y'))
-        now += datetime.timedelta(days=1)
-    return days_for_reg
 
 
 def works_keyboard_fab():
