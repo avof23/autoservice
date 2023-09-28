@@ -163,3 +163,4 @@ cython_debug/
 docs/
 sql/
 *.pdf
+alembic.ini
