@@ -10,7 +10,7 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 
 from db import engine, Orders, ContentOrders, Works, Parts
-from constants import LANG, VALUT, template
+from constants import LANG, VALUT, template, HOME_PROJECT
 
 
 router_status = Router()
@@ -75,9 +75,10 @@ async def get_invoice(message: Message, command: CommandObject):
         :param oinf: list order information
         :return: None
         """
-        my_canvas = canvas.Canvas(f"../data/invoice_{oid}.pdf")
+        my_canvas = canvas.Canvas(f"{HOME_PROJECT.parents[1]}/data/invoice_{oid}.pdf")
         my_canvas.setTitle('Invoice document PyAutoService')
-        my_canvas.drawImage('../img/pyLogo.png', 30, 700, width=100, height=100, preserveAspectRatio=True, mask='auto')
+        my_canvas.drawImage(f'{HOME_PROJECT.parents[1]}/img/pyLogo.png', 30, 700, width=100, height=100,
+                            preserveAspectRatio=True, mask='auto')
         my_canvas.setFont('Helvetica', 14)
         my_canvas.drawString(150, 750, 'PyAutoService')
         my_canvas.setLineWidth(.3)
