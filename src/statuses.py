@@ -75,7 +75,7 @@ async def get_invoice(message: Message, command: CommandObject):
         :param oinf: list order information
         :return: None
         """
-        my_canvas = canvas.Canvas(f"{HOME_PROJECT.parents[1]}/data/invoice_{oid}.pdf")
+        my_canvas = canvas.Canvas(f'{HOME_PROJECT.parents[1]}/data/invoice_{oid}.pdf')
         my_canvas.setTitle('Invoice document PyAutoService')
         my_canvas.drawImage(f'{HOME_PROJECT.parents[1]}/img/pyLogo.png', 30, 700, width=100, height=100,
                             preserveAspectRatio=True, mask='auto')
@@ -122,7 +122,7 @@ async def get_invoice(message: Message, command: CommandObject):
             order_id = int(command.args)
             order_info = get_db_order(message.from_user.id, order_id)
             generate_pdf(order_id, order_info)
-            file = FSInputFile(f"../data/invoice_{order_id}.pdf", filename=f"invoice_{order_id}.pdf")
+            file = FSInputFile(f'{HOME_PROJECT.parents[1]}/data/invoice_{order_id}.pdf', filename=f'invoice_{order_id}.pdf')
             await message.answer_document(file)
         except Exception:
             await message.answer(template[LANG]['incorrectid'])
