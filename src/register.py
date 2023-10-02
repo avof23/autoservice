@@ -25,6 +25,13 @@ router_register = Router()
 
 
 def update_client_db(id: int, name: str, descr: str) -> None:
+    """
+    The function adds a new client to the database or updates an existing one
+    :param id: int client ID
+    :param name: str client Name
+    :param descr: str client description
+    :return: None
+    """
     client = Clients()
     client.id = id
     client.name = name
@@ -35,6 +42,11 @@ def update_client_db(id: int, name: str, descr: str) -> None:
 
 
 def create_order_db(**kwargs) -> int:
+    """
+    Function of adding a new order to the database
+    :param kwargs: all params for create new order
+    :return: Int ID created order
+    """
     order = Orders()
     cont_order = ContentOrders()
     order.status_id = kwargs['status_id']
