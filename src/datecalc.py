@@ -20,7 +20,7 @@ def get_masters_db(qu: str) -> list:
 
 def get_orders_db(master_id: int, start_date: datetime.datetime, end_date: datetime.datetime | bool = False) -> list:
     """
-    The function get information about orders from database
+    The function get information about orders from database by specific master ID
         :param master_id: Integer for width filter in query
         :param start_date: Datetime for width filter in query
         :param end_date: Datetime for width filter in query

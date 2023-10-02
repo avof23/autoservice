@@ -68,6 +68,10 @@ def get_context_order(order_id: int) -> list:
 
 @router_status.message(Command("info", ignore_case=True))
 async def get_invoice(message: Message, command: CommandObject):
+    """
+    This handler receives messages with `/info` command.
+    Return the generated document based on the ID from the database.
+    """
     def generate_pdf(oid: int, oinf: list) -> None:
         """
         Helper function generate pdf
