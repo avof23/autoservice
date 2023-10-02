@@ -89,8 +89,6 @@ Table content_orders {
   Note: 'Stores item of orders'
 }
 ```
-- push уведомления
-- меню
 
 ### Author
 A.Vlashchenkov
