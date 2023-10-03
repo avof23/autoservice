@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from db import engine, Masters, Orders
-from constants import WORK_TIME, WEEKEND_DAYS
+from constants import WORK_TIME, WEEKEND_DAYS, WAIT_STATUS_ID
 
 
 def get_masters_db(qu: str) -> list:
@@ -29,7 +29,7 @@ def get_orders_db(master_id: int, start_date: datetime.datetime, end_date: datet
     with Session(engine) as session:
         m_result = session.query(Orders)\
             .filter(Orders.master_id == master_id) \
-            .filter(Orders.status_id < 4) \
+            .filter(Orders.status_id < WAIT_STATUS_ID) \
             .filter(Orders.start_date >= start_date)
 
         if end_date:
@@ -48,7 +48,7 @@ def check_free_master_in_date(master_id: int, work_date: datetime.datetime) -> b
     with Session(engine) as session:
         m_result = session.query(Orders) \
             .filter(Orders.master_id == master_id) \
-            .filter(Orders.status_id < 4) \
+            .filter(Orders.status_id < WAIT_STATUS_ID) \
             .filter(Orders.start_date <= work_date) \
             .filter(Orders.end_date > work_date)
         m_result.first()

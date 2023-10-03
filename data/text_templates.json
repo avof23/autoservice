@@ -18,7 +18,9 @@
   "multiorder": "You have open orders",
   "cancel": "Canceled register process",
   "create": "Order successful created, ID: {id}",
-  "errorcreate": "Unfortunately, this time is already taken, please try again for another time."},
+  "errorcreate": "Unfortunately, this time is already taken, please try again for another time.",
+  "push-1": "You have a <b>{start_date}</b> scheduled visit to the service,\n Order number <b>{id}</b>, Master: {master}",
+  "push-5": "Your Order <b>{id}</b>, completed, you can pick up the car!"},
 
   "ru": {"welcome": "Добро пожаловать в AutoServiceBot.\nВы можете записать ваше auto на service на определенную дату.\nПосле записи вы можете посмотреть статус вашего заказа и прочую информацию по нему.\nДля вывода справки наберите /help",
   "help": "Функции Бота:\n/help - Вывод справки\n/register - Запись авто на сервис\n/status - Получить статус заказа\n/cancel - Отмена процесса записи",
@@ -40,5 +42,7 @@
   "multiorder": "У вас открыты заказы",
   "cancel": "Отменен процесс регистрации",
   "create": "Заказ успешно создан, ID: {id}",
-  "errorcreate": "К сожалению данное время уже занято, повторите запись на другое время"}
+  "errorcreate": "К сожалению данное время уже занято, повторите запись на другое время",
+  "push-1": "У вас <b>{start_date}</b> запланирован визит на сервис,\n Номер заказа <b>{id}</b>, Мастер: {master}",
+  "push-5": "Ваш Заказ <b>{id}</b>, выполнен, можно забирать Авто!"}
 }

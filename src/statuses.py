@@ -10,7 +10,7 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 
 from db import engine, Orders, ContentOrders, Works, Parts
-from constants import LANG, VALUT, template, HOME_PROJECT
+from constants import LANG, VALUT, template, HOME_PROJECT, WAIT_STATUS_ID
 
 
 router_status = Router()
@@ -29,7 +29,7 @@ def get_db_order(user_id: int, order_id: int | bool = False) -> list:
         if order_id:
             q_result = q_result.filter(Orders.id == order_id, Orders.client_id == user_id)
         else:
-            q_result = q_result.filter(Orders.client_id == user_id).filter(Orders.status_id <= 4)
+            q_result = q_result.filter(Orders.client_id == user_id).filter(Orders.status_id <= WAIT_STATUS_ID)
         q_result.all()
         result = [{
             'id': order.id,
@@ -126,7 +126,8 @@ async def get_invoice(message: Message, command: CommandObject):
             order_id = int(command.args)
             order_info = get_db_order(message.from_user.id, order_id)
             generate_pdf(order_id, order_info)
-            file = FSInputFile(f'{HOME_PROJECT.parents[1]}/data/invoice_{order_id}.pdf', filename=f'invoice_{order_id}.pdf')
+            file = FSInputFile(f'{HOME_PROJECT.parents[1]}/data/invoice_{order_id}.pdf',
+                               filename=f'invoice_{order_id}.pdf')
             await message.answer_document(file)
         except Exception:
             await message.answer(template[LANG]['incorrectid'])
