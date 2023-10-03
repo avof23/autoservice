@@ -1,3 +1,5 @@
+"""This module for connecting to a database to receive and update the status of orders to be sent push message"""
+
 from datetime import datetime as dt, timedelta
 
 from sqlalchemy.orm import Session
@@ -5,6 +7,11 @@ from db import engine, Orders
 
 
 def get_recipients_db(order_type: int) -> list:
+    """
+    The function receives orders from the database by their type
+    :param order_type: int for filtering database select
+    :return: List contains dict orders
+    """
     now = dt.now()
     now += timedelta(days=1)
     with Session(engine) as session:
@@ -23,6 +30,11 @@ def get_recipients_db(order_type: int) -> list:
 
 
 def set_pushed_db(ids: list) -> None:
+    """
+    The function changes the status of an order in the database by its ID
+    :param ids: list contains id for changed in database
+    :return: None
+    """
     with Session(engine) as session:
         for order_id in ids:
             updated_id = session.query(Orders).filter(Orders.id == order_id).first()
@@ -31,9 +43,5 @@ def set_pushed_db(ids: list) -> None:
 
 
 if __name__ == "__main__":
-    change_list  = []
-    for ord in get_recipients_db(1):
-        print(ord)
-        change_list.append(ord['id'])
-    print(change_list)
-    set_pushed_db(change_list)
+    for od in get_recipients_db(1):
+        print(od)
