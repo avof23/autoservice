@@ -12,3 +12,5 @@ test:
 		coverage run -m pytest
 run:
 		python src/mainbot.py
+api:
+		uvicorn app.main:app --reload
