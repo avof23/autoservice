@@ -1,3 +1,6 @@
+"""
+Schemas data for fastapi model
+"""
 from typing import Optional
 import datetime
 

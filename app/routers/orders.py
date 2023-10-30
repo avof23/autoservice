@@ -13,6 +13,40 @@ from app import schemas
 router = APIRouter()
 
 
+def order_summ_calculate(order_summ: float, credit_summ: float, new_order_summ: float) -> float:
+    """
+    Calculate new credit summ on incoming values
+    :param order_summ: flaat current order summ
+    :param credit_summ: float current order credit summ
+    :param new_order_summ: float new order summ
+    :return: float result new credit summ
+    """
+    return credit_summ - (new_order_summ - order_summ)
+
+
+def set_order_summ(order_id: int) -> None:
+    """
+    Set in order new calculated summ and credit summ
+    :param order_id: int order ID where set new summ and credit summ
+    :return: None
+    """
+    with Session(engine) as session:
+        order = session.get(Orders, order_id)
+        if order is None:
+            raise HTTPException(status_code=404, detail="Order not found")
+        new_order_summ = 0
+        order_cont = session.query(ContentOrders).filter(ContentOrders.order_id == order_id).all()
+        for cont in order_cont:
+            if cont.work_id:
+                new_order_summ += cont.quantity * cont.work.price
+            if cont.part_id:
+                new_order_summ += cont.quantity * cont.part.price
+        new_credit_summ = order_summ_calculate(order.order_summ, order.credit_summ, new_order_summ)
+        order.order_summ = new_order_summ
+        order.credit_summ = new_credit_summ
+        session.commit()
+
+
 @router.get("", response_model=list[schemas.Order])
 async def get_orders(from_date: str = dt.strftime(dt.now() - datetime.timedelta(days=7), '%Y-%m-%d 00:00'),
                      to_date: str = dt.strftime(dt.now(), '%Y-%m-%d 23:59'),
@@ -132,6 +166,12 @@ async def update_order(order_id: int, order: schemas.OrderUpdate) -> type[Orders
 
 @router.post("/content/{order_id}", response_model=schemas.ContentCreate)
 async def create_order_content(order_id: int, cont: schemas.ContentCreate) -> dict:
+    """
+    Function create content item for order in database
+    :param order_id: int id for filter request
+    :param cont: Object Content from schema
+    :return: dict include parameters content object
+    """
     db_content = ContentOrders(**cont.model_dump())
     db_content.order_id = order_id
     if db_content.part_id == 0:
@@ -142,11 +182,18 @@ async def create_order_content(order_id: int, cont: schemas.ContentCreate) -> di
         session.add(db_content)
         session.commit()
         session.refresh(db_content)
+        set_order_summ(order_id)
         return db_content
 
 
 @router.patch("/content/{cont_id}", response_model=schemas.ContentUpdate)
 async def update_order_content(cont_id: int, cont: schemas.ContentUpdate) -> type[ContentOrders]:
+    """
+    Function update content item in database
+    :param cont_id: int id for filter request
+    :param cont: Object Content from schema
+    :return: Object ContentOrders
+    """
     with Session(engine) as session:
         stored_content = session.get(ContentOrders, cont_id)
         if stored_content is None:
@@ -163,15 +210,22 @@ async def update_order_content(cont_id: int, cont: schemas.ContentUpdate) -> typ
 
         session.commit()
         session.refresh(stored_content)
+        set_order_summ(stored_content.order_id)
         return stored_content
 
 
 @router.delete("/content/{cont_id}")
 async def delete_order_content(cont_id: int) -> str:
+    """
+    Function delete content item in database
+    :param cont_id: int id for filter request
+    :return: str result function
+    """
     with Session(engine) as session:
         db_content = session.get(ContentOrders, cont_id)
         if db_content is None:
             raise HTTPException(status_code=404, detail="Content not found")
         session.delete(db_content)
         session.commit()
+        set_order_summ(db_content.order_id)
         return f"successful deleted content {cont_id} from order {db_content.order_id}"
