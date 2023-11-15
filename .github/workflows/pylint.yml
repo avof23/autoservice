@@ -19,7 +19,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py') --ignore-paths=./alembic/*,./tests/*
+      run: make check
     - name: Run all tests
       run: make test
