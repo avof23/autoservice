@@ -38,6 +38,7 @@ async def get_client(client_id: int) -> type[Clients]:
         raise HTTPException(status_code=404, detail="Client not found")
     return client
 
+
 @router.post("", response_model=schemas.Client)
 async def create_client(client: schemas.ClientCreate) -> dict:
     """
