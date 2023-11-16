@@ -1,6 +1,6 @@
 
 check:
-		pylint src app --recursive=y --ignore-paths=./alembic/*,./tests/*
+		pylint src app --recursive=y --ignore-paths=./alembic/*,./tests/*,./sql/*
 format:
 		black .
 		isort .

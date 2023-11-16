@@ -52,7 +52,7 @@ def create_test_data(db_session):
             Masters(id=i,
                     master_name=fake.name(),
                     qualification=fake.masters_profession()
-                    ) for i in range(1, 4)
+                    ) for i in range(1, 7)
     ]
     clients = [
             Clients(id=i,
