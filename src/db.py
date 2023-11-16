@@ -159,4 +159,5 @@ class ContentOrders(BaseModel):
         return f'{self.order_id} {self.work_id}/{self.part_id} {self.quantity}'
 
 
-# Base.metadata.create_all(engine)
+def init_db():
+    Base.metadata.create_all(engine)

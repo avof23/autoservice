@@ -1,10 +1,11 @@
+"""This module describes functions for calculate calendar operation"""
 import datetime
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from db import engine, Masters, Orders
-from constants import WORK_TIME, WEEKEND_DAYS, WAIT_STATUS_ID
+from src.db import engine, Masters, Orders
+from src.constants import WORK_TIME, WEEKEND_DAYS, WAIT_STATUS_ID
 
 
 def get_masters_db(qu: str) -> list:

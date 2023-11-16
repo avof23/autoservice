@@ -3,7 +3,7 @@
 from datetime import datetime as dt, timedelta
 
 from sqlalchemy.orm import Session
-from db import engine, Orders
+from src.db import engine, Orders
 
 
 def get_recipients_db(order_type: int) -> list:

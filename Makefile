@@ -1,6 +1,6 @@
 
 check:
-		pylint src --recursive=y --ignore qtest.py,core_db2.py
+		pylint src app --recursive=y --ignore-paths=./alembic/*,./tests/*
 format:
 		black .
 		isort .
@@ -12,3 +12,5 @@ test:
 		coverage run -m pytest
 run:
 		python src/mainbot.py
+api:
+		uvicorn app.main:app --reload
