@@ -103,7 +103,7 @@ def create_test_data(db_session):
                    order_summ=fake.pyfloat(left_digits=4, right_digits=2, positive=False, min_value=300, max_value=1500),
                    client_id=fake.pyint(min_value=1, max_value=10, step=1),
                    master_id=i
-                   ) for i in range(1, 4)
+                   ) for i in range(1, 7)
     ]
 
     db_session.add_all(masters)
