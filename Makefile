@@ -9,7 +9,7 @@ req:
 prepare:
 		pip install -r requirements.txt
 test:
-		export PYTHONPATH=~/PycharmProjects/AutoService/src && coverage run -m pytest
+		export PYTHONPATH=~/PycharmProjects/AutoService/src:/home/runner/work/autoservice/autoservice && coverage run -m pytest
 run:
 		python src/mainbot.py
 api:
