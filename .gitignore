@@ -161,6 +161,5 @@ cython_debug/
 
 #Other user defined
 docs/
-sql/
 *.pdf
 *.db
